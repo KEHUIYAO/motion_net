@@ -25,10 +25,17 @@ class LightningMotionNet(pl.LightningModule):
         return self.motion_net(images, actions, state, image_mask)
 
     def training_step(self, batch, batch_idx):
-        [_, mask, images_input, actions, state, images_true] = batch
+        [_, mask, images_input, actions, state, images_true] = batch 
+       
         pred = self.forward(images_input, actions, state, mask)
+        
+        
         pred = torch.stack(pred, dim=1)  # Bx(T-1)xCxHxW
-        loss = self.loss_function(pred, images_true)
+        
+        mask = mask[0, :]  # mask is T
+        
+        # loss = self.loss_function(pred, images_true)
+        loss = self.loss_function(pred[:, mask[1:] == 0, ...], images_true[:, mask[1:] == 0, ...])  # only test the prediction on the unobserved data
         self.log('train_loss', loss)
         return loss
 
@@ -44,9 +51,15 @@ class LightningMotionNet(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
 
         [_, mask, images_input, actions, state, images_true] = batch
+        
         pred = self.forward(images_input, actions, state, mask)
         pred = torch.stack(pred, dim=1)  # Bx(T-1)xCxHxW
-        loss = self.loss_function(pred, images_true)
+        # loss = self.loss_function(pred, images_true)
+        
+        mask = mask[0, :]  # mask is T
+        
+        loss = self.loss_function(pred[:, mask[1:] == 0, ...], images_true[:, mask[1:] == 0, ...])  # only test the prediction on the unobserved data
+
 
         return {'loss': loss}
 

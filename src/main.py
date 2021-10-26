@@ -5,13 +5,15 @@ from trainer import LightningMotionNet
 import numpy as np
 import torch
 import pytorch_lightning as pl
+from visualization import plot_spatio_temporal_data
+
 
 root = '../data'
 n_frames = 20
 num_digits = 2
 image_size = 64
 digit_size = 28
-N = 16 # total number of samples including training and validation data
+N = 1000 # total number of samples including training and validation data
 mask = np.array([1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1])
 data = MovingMNIST2( root,
                      n_frames,
@@ -37,9 +39,11 @@ except:
 
 
 if __name__ == "__main__":
-    max_epoch = 1
+    max_epoch = 20
     if torch.cuda.is_available():
         trainer = pl.Trainer(max_epochs=max_epoch, gpus=1)
     else:
         trainer = pl.Trainer(max_epochs=max_epoch)
     trainer.fit(model, data_module)
+
+trainer.save_checkpoint("motion_net.ckpt")

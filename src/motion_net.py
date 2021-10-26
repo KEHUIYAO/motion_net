@@ -245,7 +245,8 @@ class MotionNet(nn.Module):
         return gen_images
 
     def stp_transformation(self, image, stp_input):
-        identity_params = torch.tensor([1.0, 0.0, 0.0, 0.0, 1.0, 0.0], dtype=torch.float32).unsqueeze(1).repeat(1, self.num_masks-1)
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        identity_params = torch.tensor([1.0, 0.0, 0.0, 0.0, 1.0, 0.0], dtype=torch.float32).unsqueeze(1).repeat(1, self.num_masks-1).to(device)
 
         stp_input = self.fc(stp_input)
         stp_input = self.fc_stp(stp_input)
