@@ -12,7 +12,7 @@ import pytorch_lightning as pl
 from visualization import plot_spatio_temporal_data
 
 
-root = '.、'
+root = './'
 n_frames = 20
 num_digits = 2
 image_size = 64
@@ -42,12 +42,12 @@ except:
     pass
 
 
-if __name__ == "__main__":
-    max_epoch = 20
-    if torch.cuda.is_available():
-        trainer = pl.Trainer(max_epochs=max_epoch, gpus=1)
-    else:
-        trainer = pl.Trainer(max_epochs=max_epoch)
-    trainer.fit(model, data_module)
+
+max_epoch = 20
+if torch.cuda.is_available():
+    trainer = pl.Trainer(max_epochs=max_epoch, gpus=1)
+else:
+    trainer = pl.Trainer(max_epochs=max_epoch)
+trainer.fit(model, data_module)
 
 trainer.save_checkpoint("motion_net.ckpt")
