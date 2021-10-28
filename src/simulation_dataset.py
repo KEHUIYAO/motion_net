@@ -2,6 +2,7 @@ import numpy as np
 import os
 import gzip
 import random
+from numpy.random import RandomState
 
 class MovingMNIST2:
     """The MovingMNIST dataset with missing values, the goal is to impute the missing frames"""
@@ -14,7 +15,8 @@ class MovingMNIST2:
                  digit_size,
                  N,
                  transform=None,
-                 use_fixed_dataset=False):
+                 use_fixed_dataset=False,
+                 random_state=None):
         '''if use_fixed_dataset = True, the mnist_test_seq.npy in the root folder will be loaded'''
         super().__init__()
         self.use_fixed_dataset = use_fixed_dataset
@@ -36,6 +38,9 @@ class MovingMNIST2:
         self.digit_size_ = digit_size
         self.step_length_ = 0.1
         self.num_digits = num_digits
+        self.random_state = random_state
+        if random_state is not None:
+            self.rng = RandomState(random_state)
 
     def load_mnist(self, root, image_size):
         # Load MNIST dataset for generating training data.
@@ -56,11 +61,20 @@ class MovingMNIST2:
     def get_random_trajectory(self, seq_length):
         ''' Generate a random sequence of a MNIST digit '''
         canvas_size = self.image_size_ - self.digit_size_
-        x = random.random()
-        y = random.random()
-        theta = random.random() * 2 * np.pi
-        v_y = np.sin(theta)
-        v_x = np.cos(theta)
+
+
+        if self.random_state is not None:  # if reproducible
+            x = self.rng.random()
+            y = self.rng.random()
+            theta = self.rng.random() * 2 * np.pi
+            v_y = np.sin(theta)
+            v_x = np.cos(theta)
+        else:
+            x = random.random()
+            y = random.random()
+            theta = random.random() * 2 * np.pi
+            v_y = np.sin(theta)
+            v_x = np.cos(theta)
 
         start_y = np.zeros(seq_length)
         start_x = np.zeros(seq_length)
@@ -100,7 +114,13 @@ class MovingMNIST2:
         for n in range(self.num_digits):
             # Trajectory
             start_y, start_x = self.get_random_trajectory(self.n_frames)
-            ind = random.randint(0, self.mnist.shape[0] - 1)
+
+
+            if self.random_state is not None:
+                ind = self.rng.randint(0, self.mnist.shape[0] - 1)
+            else:
+                ind = random.randint(0, self.mnist.shape[0] - 1)
+
             digit_image = self.mnist[ind]
             for i in range(self.n_frames):
                 top = start_y[i]
