@@ -2,7 +2,7 @@ universe = vanilla
 executable = submit.sh
 output = $(Cluster)_$(Process).out
 
-transfer_input_files = environment.yml, ../src/main.py, ../src/motion_net.py, ../src/simulation_dataset.py, ../src/trainer.py, ../src/simulation_dataset_datamodule.py, ../data/train-images-idx3-ubyte.gz, ../src/visualization.py
+transfer_input_files = environment.yml, ../MovingMnist_imputation/train_motion_net.py, ../src/motion_net.py, ../src/simulation_dataset.py, ../src/trainer.py, ../src/simulation_dataset_datamodule.py, ../MovingMnist_imputation/train-images-idx3-ubyte.gz, ../src/visualization.py
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 
