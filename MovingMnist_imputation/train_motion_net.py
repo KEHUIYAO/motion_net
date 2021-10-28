@@ -17,7 +17,7 @@ n_frames = 20
 num_digits = 2
 image_size = 64
 digit_size = 28
-N = 1000 # total number of samples including training and validation data
+N = 2000 # total number of samples including training and validation data
 mask = np.array([1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1])
 data = MovingMNIST2( root,
                      n_frames,
