@@ -27,7 +27,8 @@ data = MovingMNIST2( root,
                      digit_size,
                      N,
                      transform=None,
-                     use_fixed_dataset=False)
+                     use_fixed_dataset=False,
+                     )
 data_module = DatasetDataModule(data, 4, 0.5)
 
 motion_net = MotionNet(channels=1, state_dim=0, action_dim=0)
@@ -36,7 +37,7 @@ model = LightningMotionNet(motion_net, learning_rate)
 
 # load from checkpoint
 try:
-    model.load_from_checkpoint(checkpoint_path='motion_net.ckpt', motion_net=motion_net, learning_rate=learning_rate)
+    model.load_from_checkpoint(checkpoint_path='motion_net_stp.ckpt', motion_net=motion_net, learning_rate=learning_rate)
 except:
     print('fail to load the model')
     pass
@@ -50,4 +51,4 @@ else:
     trainer = pl.Trainer(max_epochs=max_epoch)
 trainer.fit(model, data_module)
 
-trainer.save_checkpoint("motion_net.ckpt")
+trainer.save_checkpoint("motion_net_stp.ckpt")

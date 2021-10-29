@@ -41,7 +41,8 @@ class MovingMNIST2:
         self.random_state = random_state
         if random_state is not None:
             self.rng = RandomState(random_state)
-
+        else:
+            self.rng = RandomState(random.randint(1, 1e4))
     def load_mnist(self, root, image_size):
         # Load MNIST dataset for generating training data.
         path = os.path.join(root, 'train-images-idx3-ubyte.gz')
@@ -63,18 +64,12 @@ class MovingMNIST2:
         canvas_size = self.image_size_ - self.digit_size_
 
 
-        if self.random_state is not None:  # if reproducible
-            x = self.rng.random()
-            y = self.rng.random()
-            theta = self.rng.random() * 2 * np.pi
-            v_y = np.sin(theta)
-            v_x = np.cos(theta)
-        else:
-            x = random.random()
-            y = random.random()
-            theta = random.random() * 2 * np.pi
-            v_y = np.sin(theta)
-            v_x = np.cos(theta)
+
+        x = self.rng.random()
+        y = self.rng.random()
+        theta = self.rng.random() * 2 * np.pi
+        v_y = np.sin(theta)
+        v_x = np.cos(theta)
 
         start_y = np.zeros(seq_length)
         start_x = np.zeros(seq_length)
@@ -114,13 +109,7 @@ class MovingMNIST2:
         for n in range(self.num_digits):
             # Trajectory
             start_y, start_x = self.get_random_trajectory(self.n_frames)
-
-
-            if self.random_state is not None:
-                ind = self.rng.randint(0, self.mnist.shape[0] - 1)
-            else:
-                ind = random.randint(0, self.mnist.shape[0] - 1)
-
+            ind = self.rng.randint(0, self.mnist.shape[0] - 1)
             digit_image = self.mnist[ind]
             for i in range(self.n_frames):
                 top = start_y[i]

@@ -19,7 +19,7 @@ num_digits = 2
 image_size = 64
 digit_size = 28
 N = 1 # total number of samples including training and validation data
-mask = np.array([1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1])
+mask = np.array([1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0])
 test_data = MovingMNIST2( root,
                      n_frames,
                      mask,
@@ -32,13 +32,13 @@ test_data = MovingMNIST2( root,
                      random_state=1)
 test_data_loader = DataLoader(test_data, 1)
 
-motion_net = MotionNet(channels=1, state_dim=0, action_dim=0)
+motion_net = MotionNet(channels=1, state_dim=0, action_dim=0, stp=False, cdna=True, dna=False)
 learning_rate = 1e-4
 model = LightningMotionNet(motion_net, learning_rate)
 
 # load from checkpoint
 try:
-    model.load_from_checkpoint(checkpoint_path='motion_net.ckpt', motion_net=motion_net, learning_rate=learning_rate)
+    model.load_from_checkpoint(checkpoint_path='motion_net_cdna.ckpt', motion_net=motion_net, learning_rate=learning_rate)
 except:
     print('fail to load the model')
     pass
@@ -60,8 +60,8 @@ for idx, batch in enumerate(test_data_loader):
     loss = np.mean((pred[mask[1:] == 0, ...] - images_true[mask[1:] == 0, ...])**2)  # only test the prediction on the unobserved data
     print(loss)
 
-    plot_spatio_temporal_data(images_true, save_fig=True, fig_name='motion_net_true', mask=mask[1:])  # plot the true frames
-    plot_spatio_temporal_data(pred, save_fig=True, fig_name='motion_net_pred', mask=mask[1:])  # plot the predicted frames
+    plot_spatio_temporal_data(images_true, save_fig=True, fig_name='motion_net_with_cdna_true', mask=mask[1:])  # plot the true frames
+    plot_spatio_temporal_data(pred, save_fig=True, fig_name='motion_net_with_cdna_pred', mask=mask[1:])  # plot the predicted frames
 
     if idx == 0:
         break

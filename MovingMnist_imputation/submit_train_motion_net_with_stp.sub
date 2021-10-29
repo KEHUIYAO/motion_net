@@ -1,8 +1,8 @@
 universe = vanilla
-executable = submit.sh
+executable = submit_train_motion_net_with_stp.sh
 output = $(Cluster)_$(Process).out
 
-transfer_input_files = environment.yml, ../MovingMnist_imputation/train_motion_net.py, ../src/motion_net.py, ../src/simulation_dataset.py, ../src/trainer.py, ../src/simulation_dataset_datamodule.py, ../MovingMnist_imputation/train-images-idx3-ubyte.gz, ../src/visualization.py
+transfer_input_files = environment.yml, train_motion_net_with_stp.py, train-images-idx3-ubyte.gz, ../src/motion_net.py, ../src/simulation_dataset.py, ../src/trainer.py, ../src/simulation_dataset_datamodule.py,  ../src/visualization.py
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 
