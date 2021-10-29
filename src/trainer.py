@@ -34,9 +34,9 @@ class LightningMotionNet(pl.LightningModule):
         
         mask = mask[0, :]  # mask is T
         
-        loss = self.loss_function(pred, images_true)  # loss consists of: 1.discrepancy between true missing data and predicted missing data; 2. discrepancy between true observed data and predicted observed data
+        # loss = self.loss_function(pred, images_true)  # loss consists of: 1.discrepancy between true missing data and predicted missing data; 2. discrepancy between true observed data and predicted observed data
         # loss = self.loss_function(pred[:, mask[1:] == 0, ...], images_true[:, mask[1:] == 0, ...])  # loss consists of only the discrepancy between true missing data and predicted missing data
-        # loss = self.loss_function(pred[:, mask[1:] == 1, ...], images_true[:, mask[1:] == 1, ...])  # loss consists of only the discrepancy between true observed data and predicted observed data
+        loss = self.loss_function(pred[:, mask[1:] == 1, ...], images_true[:, mask[1:] == 1, ...])  # loss consists of only the discrepancy between true observed data and predicted observed data
         self.log('train_loss', loss)
         return loss
 
@@ -55,11 +55,11 @@ class LightningMotionNet(pl.LightningModule):
         
         pred = self.forward(images_input, actions, state, mask)
         pred = torch.stack(pred, dim=1)  # Bx(T-1)xCxHxW
-        loss = self.loss_function(pred, images_true)
-        
         mask = mask[0, :]  # mask is T
-        
-        # loss = self.loss_function(pred[:, mask[1:] == 0, ...], images_true[:, mask[1:] == 0, ...])  # only test the prediction on the unobserved data
+
+        # loss = self.loss_function(pred, images_true)  # loss consists of: 1.discrepancy between true missing data and predicted missing data; 2. discrepancy between true observed data and predicted observed data
+        # loss = self.loss_function(pred[:, mask[1:] == 0, ...], images_true[:, mask[1:] == 0, ...])  # loss consists of only the discrepancy between true missing data and predicted missing data
+        loss = self.loss_function(pred[:, mask[1:] == 1, ...], images_true[:, mask[1:] == 1, ...])  # loss consists of only the discrepancy between true observed data and predicted observed data
 
 
         return {'loss': loss}
